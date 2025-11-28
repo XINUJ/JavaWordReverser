@@ -23,7 +23,9 @@ jobs:
       run: javac ReverseWords/ReverseWords.java
 
     - name: Create manifest file
-      run: echo "Main-Class:ReverseWords" > manifest.txt
+      run: |
+        Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
+
 
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
