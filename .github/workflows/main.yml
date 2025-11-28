@@ -20,7 +20,7 @@ jobs:
           java-version: '17'
 
       - name: Compile Java
-        run: javac ReverseWordsGUI.java
+        run: javac ReverseWords.java
 
       - name: Create JAR with manifest
         run: |
