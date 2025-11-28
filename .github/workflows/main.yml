@@ -1,0 +1,44 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Compile Java
+        run: javac ReverseWords/ReverseWords.java
+
+      - name: Create JAR with manifest
+        run: |
+          echo Main-Class: ReverseWords > manifest.txt
+          jar cfm WordReverser.jar manifest.txt ReverseWords.class
+
+      - name: Use jpackage to build EXE
+        run: |
+          jpackage ^
+            --type exe ^
+            --name WordReverser ^
+            --main-class ReverseWords ^
+            --main-jar WordReverser.jar ^
+            --dest installer ^
+            --app-version 1.0
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: WordReverser-Windows
+          path: installer
