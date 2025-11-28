@@ -24,15 +24,15 @@ jobs:
 
       - name: Create JAR with manifest
         run: |
-          echo Main-Class: ReverseWordsGUI > manifest.txt
-          jar cfm WordReverser.jar manifest.txt ReverseWordsGUI.class
+          echo Main-Class: ReverseWords > manifest.txt
+          jar cfm WordReverser.jar manifest.txt ReverseWords.class
 
       - name: Use jpackage to build EXE
         run: |
           jpackage ^
             --type exe ^
             --name WordReverser ^
-            --main-class ReverseWordsGUI ^
+            --main-class ReverseWords ^
             --main-jar WordReverser.jar ^
             --dest installer ^
             --app-version 1.0
