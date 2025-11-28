@@ -23,7 +23,7 @@ jobs:
       run: javac ReverseWords/ReverseWords.java
 
     - name: Create manifest file
-      run: printf "Main-Class: ReverseWords\r\n" > manifest.txt
+      run: printf "Main-Class:ReverseWords\r\n" > manifest.txt
 
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
