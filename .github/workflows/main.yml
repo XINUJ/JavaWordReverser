@@ -24,8 +24,8 @@ jobs:
 
       - name: Create JAR with manifest
         run: |
-          echo Main-Class: ReverseWords > manifest.txt
-          jar cfm WordReverser.jar manifest.txt ReverseWords.class
+          run: printf "Main-Class: ReverseWords\r\n" > manifest.txt
+          run: jar cfm ReverseWords.jar manifest.txt -C src .
 
       - name: Use jpackage to build EXE
         run: |
