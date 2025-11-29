@@ -59,13 +59,14 @@ jobs:
 
     # 8️⃣ List Launch4j bin to verify
     - name: Verify Launch4j executable
-      run: dir launch4j\bin
+      run: dir launch4j\launch4j-3.18-win32\bin
 
     # 9️⃣ Build EXE using Launch4j
     - name: Build EXE
       shell: pwsh
       run: |
-        & ".\launch4j\bin\launch4j.exe" launch4j-config.xml
+        & ".\launch4j\launch4j-3.18-win32\bin\launch4j.exe" launch4j-config.xml
+
 
     # 🔟 Upload JAR artifact
     - name: Upload JAR artifact
