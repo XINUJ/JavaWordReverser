@@ -10,43 +10,58 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    # 1️⃣ Checkout code
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # 2️⃣ Set up Java 17
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
-        distribution: "temurin"
-        java-version: "17"
+        distribution: temurin
+        java-version: 17
 
+    # 3️⃣ Compile Java
     - name: Compile Java
       run: javac ReverseWords/ReverseWords.java
 
+    # 4️⃣ Create manifest
     - name: Create manifest file
-      run: |
-        Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
+      run: echo Main-Class:ReverseWords > manifest.txt
 
+    # 5️⃣ Create JAR
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
+    # 6️⃣ Prepare input folder for jpackage
+    - name: Prepare input folder
+      run: |
+        mkdir input
+        move WordReverser.jar input/
+
+    # 7️⃣ Build EXE using jpackage
     - name: Build EXE with jpackage
       run: |
         jpackage `
-          --input . `
+          --input input `
           --main-jar WordReverser.jar `
           --main-class ReverseWords `
           --name WordReverser `
-          --type exe
+          --type exe `
+          --win-dir-chooser `
+          --win-shortcut
 
-    # Upload artifacts
+    # 8️⃣ Upload JAR artifact
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-JAR
         path: WordReverser.jar
 
+    # 9️⃣ Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-EXE
+        # jpackage creates the exe in the current folder by default
         path: WordReverser.exe
