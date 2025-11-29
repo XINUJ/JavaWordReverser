@@ -34,10 +34,10 @@ jobs:
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
-    # 6️⃣ Download Launch4j CLI
+    # 6️⃣ Download Launch4j CLI (direct SourceForge ZIP)
     - name: Download Launch4j
       run: |
-        curl -L -o launch4j.zip https://sourceforge.net/projects/launch4j/files/launch4j-3/3.18/launch4j-3.18-win32.zip/download
+        curl -L -o launch4j.zip https://downloads.sourceforge.net/project/launch4j/launch4j-3/3.18/launch4j-3.18-win32.zip
         powershell -Command "Expand-Archive launch4j.zip -DestinationPath launch4j"
 
     # 7️⃣ Generate Launch4j XML config dynamically
@@ -57,7 +57,7 @@ jobs:
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
 
-    # 8️⃣ List Launch4j bin to verify
+    # 8️⃣ Verify Launch4j executable exists
     - name: Verify Launch4j executable
       run: dir launch4j\launch4j-3.18-win32\bin
 
@@ -66,7 +66,6 @@ jobs:
       shell: pwsh
       run: |
         & ".\launch4j\launch4j-3.18-win32\bin\launch4j.exe" launch4j-config.xml
-
 
     # 🔟 Upload JAR artifact
     - name: Upload JAR artifact
