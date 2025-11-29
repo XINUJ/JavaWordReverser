@@ -13,12 +13,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Java (with jpackage support)
+    - name: Set up Java
       uses: actions/setup-java@v4
       with:
         distribution: "temurin"
         java-version: "17"
-        java-package: jdk+fx
 
     - name: Compile Java
       run: javac ReverseWords/ReverseWords.java
@@ -30,7 +29,7 @@ jobs:
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
-    - name: Package EXE with jpackage
+    - name: Build EXE with jpackage
       run: |
         jpackage `
           --input . `
