@@ -14,8 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2️⃣ Verify JAR exists
-    - name: List files
+    # 2️⃣ Verify files
+    - name: List repo files
+      run: dir
+
+    - name: List ReverseWords folder
       run: dir ReverseWords
 
     # 3️⃣ Generate Launch4j XML config dynamically
@@ -24,7 +27,7 @@ jobs:
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
         echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
-        echo   ^<jar^>.WordReverser.jar^</jar^> >> launch4j-config.xml
+        echo   ^<jar^>.\ReverseWords\WordReverser.jar^</jar^> >> launch4j-config.xml
         echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
         echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
         echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
@@ -39,13 +42,17 @@ jobs:
     - name: Build EXE
       shell: pwsh
       run: |
-        & ".\launch4j\launch4j.exe" launch4j-config.xml
+        & ".\launch4j\launch4j.exe" launch4j-config.xml 2>&1 | Tee-Object launch4j.log
 
-    # 5️⃣ Verify EXE
-    - name: Check for EXE
-      run: dir WordReverser.exe
+    # 5️⃣ Show Launch4j log for debugging
+    - name: Show Launch4j log
+      run: type launch4j.log
 
-    # 6️⃣ Upload EXE artifact
+    # 6️⃣ List files after build
+    - name: List files after EXE build
+      run: dir
+
+    # 7️⃣ Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
