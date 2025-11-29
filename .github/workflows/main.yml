@@ -26,12 +26,27 @@ jobs:
       run: |
         Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
 
-
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
+    - name: Build EXE with jpackage
+      run: |
+        jpackage `
+          --input . `
+          --main-jar WordReverser.jar `
+          --main-class ReverseWords `
+          --name WordReverser `
+          --type exe
+
+    # Upload artifacts
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
-        name: WordReverser
+        name: WordReverser-JAR
         path: WordReverser.jar
+
+    - name: Upload EXE artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: WordReverser-EXE
+        path: WordReverser.exe
