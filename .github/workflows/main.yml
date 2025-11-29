@@ -1,4 +1,4 @@
-name: Build Java GUI App
+name: Build Java GUI App with Bundled JRE
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
     - name: Compile Java
       run: javac ReverseWords/ReverseWords.java
 
-   # 4️⃣ Create manifest
+    # 4️⃣ Create manifest
     - name: Create manifest file
       run: |
         Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
@@ -40,8 +40,8 @@ jobs:
         mkdir input
         move WordReverser.jar input/
 
-    # 7️⃣ Build EXE using jpackage
-    - name: Build EXE with jpackage
+    # 7️⃣ Build self-contained EXE installer using jpackage
+    - name: Build EXE installer with bundled JRE
       run: |
         jpackage `
           --input input `
@@ -51,7 +51,11 @@ jobs:
           --type exe `
           --dest . `
           --win-dir-chooser `
-          --win-shortcut
+          --win-shortcut `
+          --win-per-user-install `
+          --icon ReverseWords/icon.ico `
+          --app-version 1.0.0 `
+          --runtime-image "%JAVA_HOME%"  # Bundles the JRE
 
     # 8️⃣ Upload JAR artifact
     - name: Upload JAR artifact
@@ -60,9 +64,9 @@ jobs:
         name: WordReverser-JAR
         path: input/WordReverser.jar
 
-    # 9️⃣ Upload EXE artifact
-    - name: Upload EXE artifact
+    # 9️⃣ Upload EXE installer artifact
+    - name: Upload EXE installer artifact
       uses: actions/upload-artifact@v4
       with:
-        name: WordReverser-EXE
-        path: WordReverser.exe
+        name: WordReverser-Installer
+        path: WordReverser-1.0.0.exe
