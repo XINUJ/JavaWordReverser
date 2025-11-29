@@ -1,4 +1,4 @@
-name: Build Java GUI App with Bundled JRE
+name: Build Java EXE with Launch4j
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1️⃣ Checkout code
+    # 1️⃣ Checkout repository
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -34,39 +34,43 @@ jobs:
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
-    # 6️⃣ Prepare input folder for jpackage
-    - name: Prepare input folder
+    # 6️⃣ Download Launch4j CLI
+    - name: Download Launch4j
       run: |
-        mkdir input
-        move WordReverser.jar input/
+        curl -L -o launch4j.zip https://sourceforge.net/projects/launch4j/files/launch4j-3/3.18/launch4j-3.18-win32.zip/download
+        powershell -Command "Expand-Archive launch4j.zip -DestinationPath launch4j"
 
-    # 7️⃣ Build self-contained EXE installer using jpackage
-    - name: Build EXE installer with bundled JRE
+    # 7️⃣ Generate Launch4j XML config dynamically
+    - name: Generate Launch4j XML config
       run: |
-        jpackage `
-          --input input `
-          --main-jar WordReverser.jar `
-          --main-class ReverseWords `
-          --name WordReverser `
-          --type exe `
-          --dest . `
-          --win-dir-chooser `
-          --win-shortcut `
-          --win-per-user-install `
-          --icon ReverseWords/icon.ico `
-          --app-version 1.0.0 `
-          --runtime-image "%JAVA_HOME%"  # Bundles the JRE
+        echo ^<launch4jConfig^> > launch4j-config.xml
+        echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
+        echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
+        echo   ^<jar^>WordReverser.jar^</jar^> >> launch4j-config.xml
+        echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
+        echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
+        echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
+        echo   ^<chdir^>^</chdir^> >> launch4j-config.xml
+        echo   ^<jre^> >> launch4j-config.xml
+        echo     ^<bundledJre64Bit^>true^</bundledJre64Bit^> >> launch4j-config.xml
+        echo     ^<minVersion^>17^</minVersion^> >> launch4j-config.xml
+        echo   ^</jre^> >> launch4j-config.xml
+        echo ^</launch4jConfig^> >> launch4j-config.xml
 
-    # 8️⃣ Upload JAR artifact
+    # 8️⃣ Build EXE using Launch4j
+    - name: Build EXE
+      run: launch4j\launch4j.exe launch4j-config.xml
+
+    # 9️⃣ Upload JAR artifact
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-JAR
-        path: input/WordReverser.jar
+        path: WordReverser.jar
 
-    # 9️⃣ Upload EXE installer artifact
-    - name: Upload EXE installer artifact
+    # 🔟 Upload EXE artifact
+    - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
-        name: WordReverser-Installer
-        path: WordReverser-1.0.0.exe
+        name: WordReverser-EXE
+        path: WordReverser.exe
