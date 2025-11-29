@@ -25,8 +25,8 @@ jobs:
     - name: Compile Java
       run: javac ReverseWords/ReverseWords.java
 
-    # 4️⃣ Create manifest
-    - name: Create manifest file
+    # 4️⃣ Create manifest file (ASCII encoding)
+    - name: Create manifest
       run: |
         Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
 
@@ -57,19 +57,22 @@ jobs:
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
 
+    # 8️⃣ List Launch4j bin to verify
+    - name: Verify Launch4j executable
+      run: dir launch4j\bin
+
+    # 9️⃣ Build EXE using Launch4j
     - name: Build EXE
-      run: |
-        & ".\launch4j\launch4j.exe" launch4j-config.xml
+      run: & ".\launch4j\bin\launch4j.exe" launch4j-config.xml
 
-
-    # 9️⃣ Upload JAR artifact
+    # 🔟 Upload JAR artifact
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-JAR
         path: WordReverser.jar
 
-    # 🔟 Upload EXE artifact
+    # 1️⃣1️⃣ Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
