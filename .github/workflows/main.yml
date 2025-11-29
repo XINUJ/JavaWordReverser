@@ -25,7 +25,7 @@ jobs:
     - name: Compile Java
       run: javac ReverseWords/ReverseWords.java
 
-    # 4️⃣ Create manifest file (ASCII encoding)
+    # 4️⃣ Create manifest file
     - name: Create manifest
       run: |
         Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
@@ -37,13 +37,11 @@ jobs:
     # 6️⃣ Generate Launch4j XML config dynamically
     - name: Generate Launch4j XML config
       run: |
-        $jarPath = "..\WordReverser.jar"
-        $exePath = "..\WordReverser.exe"
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
-        echo   ^<headerType^>console^</headerType^> >> launch4j-config.xml
-        echo   ^<jar^>$jarPath^</jar^> >> launch4j-config.xml
-        echo   ^<outfile^>$exePath^</outfile^> >> launch4j-config.xml
+        echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
+        echo   ^<jar^>WordReverser.jar^</jar^> >> launch4j-config.xml
+        echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
         echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
         echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
         echo   ^<chdir^>^</chdir^> >> launch4j-config.xml
@@ -52,18 +50,16 @@ jobs:
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
 
-    # 7️⃣ Build EXE using Launch4j
+    # 7️⃣ Run Launch4j to create EXE
     - name: Build EXE
       shell: pwsh
       run: |
+        # Path to Launch4j executable inside your repo
         & ".\launch4j\launch4j.exe" launch4j-config.xml
 
-    # 8️⃣ Debug: list files to verify EXE creation
-    - name: List root files
-      run: dir ..
-
-    - name: Verify EXE exists
-      run: dir ..\WordReverser.exe
+    # 8️⃣ Verify that EXE exists
+    - name: List EXE file
+      run: dir WordReverser.exe
 
     # 9️⃣ Upload JAR artifact
     - name: Upload JAR artifact
