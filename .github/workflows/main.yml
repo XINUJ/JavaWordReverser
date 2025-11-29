@@ -37,19 +37,18 @@ jobs:
     # 6️⃣ Generate Launch4j XML config dynamically
     - name: Generate Launch4j XML config
       run: |
-        $javaHome = $env:JAVA_HOME.Replace('\','\\')
+        $jarPath = "..\WordReverser.jar"
+        $exePath = "..\WordReverser.exe"
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
-        echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
-        echo   ^<jar^>WordReverser.jar^</jar^> >> launch4j-config.xml
-        echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
+        echo   ^<headerType^>console^</headerType^> >> launch4j-config.xml
+        echo   ^<jar^>$jarPath^</jar^> >> launch4j-config.xml
+        echo   ^<outfile^>$exePath^</outfile^> >> launch4j-config.xml
         echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
         echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
         echo   ^<chdir^>^</chdir^> >> launch4j-config.xml
         echo   ^<jre^> >> launch4j-config.xml
-        echo     ^<bundledJre64Bit^>true^</bundledJre64Bit^> >> launch4j-config.xml
-        echo     ^<bundledJrePath^>$javaHome^</bundledJrePath^> >> launch4j-config.xml
-        echo     ^<minVersion^>17^</minVersion^> >> launch4j-config.xml
+        echo     ^<bundledJre64Bit^>false^</bundledJre64Bit^> >> launch4j-config.xml
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
 
@@ -59,12 +58,12 @@ jobs:
       run: |
         & ".\launch4j\launch4j.exe" launch4j-config.xml
 
-    # 8️⃣ Debug: list files after building
-    - name: List files in repo
-      run: dir
+    # 8️⃣ Debug: list files to verify EXE creation
+    - name: List root files
+      run: dir ..
 
     - name: Verify EXE exists
-      run: dir WordReverser.exe
+      run: dir ..\WordReverser.exe
 
     # 9️⃣ Upload JAR artifact
     - name: Upload JAR artifact
