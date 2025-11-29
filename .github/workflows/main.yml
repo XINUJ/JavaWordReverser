@@ -37,6 +37,7 @@ jobs:
     # 6️⃣ Generate Launch4j XML config dynamically
     - name: Generate Launch4j XML config
       run: |
+        $javaHome = $env:JAVA_HOME.Replace('\','\\')
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
         echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
@@ -47,6 +48,7 @@ jobs:
         echo   ^<chdir^>^</chdir^> >> launch4j-config.xml
         echo   ^<jre^> >> launch4j-config.xml
         echo     ^<bundledJre64Bit^>true^</bundledJre64Bit^> >> launch4j-config.xml
+        echo     ^<bundledJrePath^>$javaHome^</bundledJrePath^> >> launch4j-config.xml
         echo     ^<minVersion^>17^</minVersion^> >> launch4j-config.xml
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
@@ -57,14 +59,21 @@ jobs:
       run: |
         & ".\launch4j\launch4j.exe" launch4j-config.xml
 
-    # 8️⃣ Upload JAR artifact
+    # 8️⃣ Debug: list files after building
+    - name: List files in repo
+      run: dir
+
+    - name: Verify EXE exists
+      run: dir WordReverser.exe
+
+    # 9️⃣ Upload JAR artifact
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-JAR
         path: WordReverser.jar
 
-    # 9️⃣ Upload EXE artifact
+    # 🔟 Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
