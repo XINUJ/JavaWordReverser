@@ -27,7 +27,8 @@ jobs:
 
     # 4️⃣ Create manifest
     - name: Create manifest file
-      run: echo Main-Class:ReverseWords > manifest.txt
+      run: |
+        Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
 
     # 5️⃣ Create JAR
     - name: Create JAR
