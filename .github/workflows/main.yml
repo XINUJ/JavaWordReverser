@@ -25,12 +25,12 @@ jobs:
     - name: Compile Java
       run: javac ReverseWords/ReverseWords.java
 
-    # 4️⃣ Create manifest
+   # 4️⃣ Create manifest
     - name: Create manifest file
       run: |
         Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
 
-    # 5️⃣ Create JAR
+    # 5️⃣ Create JAR in root
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
@@ -49,6 +49,7 @@ jobs:
           --main-class ReverseWords `
           --name WordReverser `
           --type exe `
+          --dest . `
           --win-dir-chooser `
           --win-shortcut
 
@@ -57,12 +58,11 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-JAR
-        path: WordReverser.jar
+        path: input/WordReverser.jar
 
     # 9️⃣ Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-EXE
-        # jpackage creates the exe in the current folder by default
         path: WordReverser.exe
