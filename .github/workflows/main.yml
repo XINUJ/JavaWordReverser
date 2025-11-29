@@ -2,7 +2,7 @@ name: Build Java EXE with Launch4j
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -14,68 +14,38 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2️⃣ Set up Java 17
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: 17
+    # 2️⃣ Verify JAR exists
+    - name: List files
+      run: dir ReverseWords
 
-    # 3️⃣ Compile Java
-    - name: Compile Java
-      run: javac ReverseWords/ReverseWords.java
-
-    # 4️⃣ Create manifest file
-    - name: Create manifest
-      run: |
-        Set-Content -Encoding ASCII manifest.txt "Main-Class: ReverseWords"
-
-    # 5️⃣ Create JAR in root
-    - name: Create JAR
-      run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
-
-    # 6️⃣ List files before EXE build
-    - name: List files before EXE build
-      run: dir
-
-    # 7️⃣ Generate Launch4j XML config dynamically
+    # 3️⃣ Generate Launch4j XML config dynamically
     - name: Generate Launch4j XML config
       run: |
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
         echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
-        echo   ^<jar^>.\WordReverser.jar^</jar^> >> launch4j-config.xml
-        echo   ^<outfile^>.\WordReverser.exe^</outfile^> >> launch4j-config.xml
+        echo   ^<jar^>.\ReverseWords\WordReverser.jar^</jar^> >> launch4j-config.xml
+        echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
         echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
         echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
         echo   ^<chdir^>^</chdir^> >> launch4j-config.xml
         echo   ^<jre^> >> launch4j-config.xml
         echo     ^<bundledJre64Bit^>false^</bundledJre64Bit^> >> launch4j-config.xml
+        echo     ^<minVersion^>17^</minVersion^> >> launch4j-config.xml
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
 
-    # 8️⃣ Run Launch4j from repo root and capture logs
+    # 4️⃣ Build EXE using Launch4j
     - name: Build EXE
       shell: pwsh
       run: |
-        & ".\launch4j\launch4j.exe" launch4j-config.xml 2>&1 | Tee-Object -FilePath launch4j.log
+        & ".\launch4j\launch4j.exe" launch4j-config.xml
 
-    # 9️⃣ Show Launch4j logs
-    - name: Show Launch4j log
-      run: type launch4j.log
+    # 5️⃣ Verify EXE
+    - name: Check for EXE
+      run: dir WordReverser.exe
 
-    # 🔟 List files after EXE build
-    - name: List files after EXE build
-      run: dir
-
-    # 1️⃣1️⃣ Upload JAR artifact
-    - name: Upload JAR artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: WordReverser-JAR
-        path: WordReverser.jar
-
-    # 1️⃣2️⃣ Upload EXE artifact
+    # 6️⃣ Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
