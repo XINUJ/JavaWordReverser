@@ -24,7 +24,7 @@ jobs:
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
         echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
-        echo   ^<jar^>.\ReverseWords\WordReverser.jar^</jar^> >> launch4j-config.xml
+        echo   ^<jar^>.WordReverser.jar^</jar^> >> launch4j-config.xml
         echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
         echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
         echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
