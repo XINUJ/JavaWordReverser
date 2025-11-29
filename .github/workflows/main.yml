@@ -34,14 +34,18 @@ jobs:
     - name: Create JAR
       run: jar cfm WordReverser.jar manifest.txt -C ReverseWords .
 
-    # 6️⃣ Generate Launch4j XML config dynamically
+    # 6️⃣ List files before EXE build
+    - name: List files before EXE build
+      run: dir
+
+    # 7️⃣ Generate Launch4j XML config dynamically
     - name: Generate Launch4j XML config
       run: |
         echo ^<launch4jConfig^> > launch4j-config.xml
         echo   ^<dontWrapJar^>false^</dontWrapJar^> >> launch4j-config.xml
         echo   ^<headerType^>gui^</headerType^> >> launch4j-config.xml
-        echo   ^<jar^>WordReverser.jar^</jar^> >> launch4j-config.xml
-        echo   ^<outfile^>WordReverser.exe^</outfile^> >> launch4j-config.xml
+        echo   ^<jar^>.\WordReverser.jar^</jar^> >> launch4j-config.xml
+        echo   ^<outfile^>.\WordReverser.exe^</outfile^> >> launch4j-config.xml
         echo   ^<errTitle^>WordReverser Error^</errTitle^> >> launch4j-config.xml
         echo   ^<cmdLine^>^</cmdLine^> >> launch4j-config.xml
         echo   ^<chdir^>^</chdir^> >> launch4j-config.xml
@@ -50,25 +54,28 @@ jobs:
         echo   ^</jre^> >> launch4j-config.xml
         echo ^</launch4jConfig^> >> launch4j-config.xml
 
-    # 7️⃣ Run Launch4j to create EXE
+    # 8️⃣ Run Launch4j from repo root and capture logs
     - name: Build EXE
       shell: pwsh
       run: |
-        # Path to Launch4j executable inside your repo
-        & ".\launch4j\launch4j.exe" launch4j-config.xml
+        & ".\launch4j\launch4j.exe" launch4j-config.xml 2>&1 | Tee-Object -FilePath launch4j.log
 
-    # 8️⃣ Verify that EXE exists
-    - name: List EXE file
-      run: dir WordReverser.exe
+    # 9️⃣ Show Launch4j logs
+    - name: Show Launch4j log
+      run: type launch4j.log
 
-    # 9️⃣ Upload JAR artifact
+    # 🔟 List files after EXE build
+    - name: List files after EXE build
+      run: dir
+
+    # 1️⃣1️⃣ Upload JAR artifact
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: WordReverser-JAR
         path: WordReverser.jar
 
-    # 🔟 Upload EXE artifact
+    # 1️⃣2️⃣ Upload EXE artifact
     - name: Upload EXE artifact
       uses: actions/upload-artifact@v4
       with:
